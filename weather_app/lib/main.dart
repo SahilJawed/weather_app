@@ -26,8 +26,8 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  String city = "Atlanta";  // Default city
-  String apiKey = "YOUR_API_KEY"; // Replace with OpenWeather API key
+  String city = "London";  // Default city
+  String apiKey = "9389832452a392af2f2b15c6df8050d0"; // Your OpenWeather API key
   double temperature = 0.0;
   String weatherCondition = "Loading...";
 
@@ -38,29 +38,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   Future<void> fetchWeather() async {
-    final url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric";
+    final url = "https://api.openweathermap.org/data/2.5/weather?q=Atlanta&appid=9389832452a392af2f2b15c6df8050d0&units=metric";
+    final response = await http.get(Uri.parse(url));
 
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          temperature = data["main"]["temp"];
-          weatherCondition = data["weather"][0]["main"];
-        });
-      } else {
-        setState(() {
-          weatherCondition = "Error: ${response.statusCode}";
-        });
-      }
-    } catch (e) {
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
       setState(() {
-        weatherCondition = "No Internet / API Issue";
+        temperature = data["main"]["temp"];
+        weatherCondition = data["weather"][0]["main"];
+      });
+    } else {
+      setState(() {
+        weatherCondition = "Error fetching data";
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
